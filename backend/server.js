@@ -8,7 +8,10 @@ const facultyRoutes = require('./routes/facultyRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: ['https://dars-e5tt.vercel.app', process.env.FRONTEND_URL || 'http://localhost:3000', 'http://localhost:3001'],
+    credentials: true
+}));
 app.use(express.json());
 
 // Simple Request Logger
