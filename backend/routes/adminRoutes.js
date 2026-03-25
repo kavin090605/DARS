@@ -94,11 +94,18 @@ router.get('/students', async (req, res) => {
 
 // --- Subject Management ---
 router.post('/subjects', async (req, res) => {
-    const { name, dept, year } = req.body;
+    const { id, name, dept, year, semester, credits } = req.body;
     try {
-        await db.execute('INSERT INTO subjects (name, dept, year) VALUES (?, ?, ?)', [name, dept, year]);
+        await db.execute(
+            'INSERT INTO subjects (id, name, dept, year, semester, credits) VALUES (?, ?, ?, ?, ?, ?)',
+            [id, name, dept, year, semester, credits || 3]
+        );
         res.status(201).json({ message: 'Subject created successfully' });
     } catch (err) {
+        console.error('Subject Creation Error:', err);
+        if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ message: 'Subject ID already exists' });
+        }
         res.status(500).json({ message: 'Error creating subject', error: err.message });
     }
 });

@@ -37,16 +37,18 @@ CREATE TABLE faculty (
 );
 
 CREATE TABLE subjects (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id VARCHAR(50) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     dept VARCHAR(100) NOT NULL,
-    year INT NOT NULL
+    year INT NOT NULL,
+    semester INT NOT NULL,
+    credits INT DEFAULT 3
 );
 
 CREATE TABLE marks (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT,
-    subject_id INT,
+    subject_id VARCHAR(50),
     internal INT DEFAULT 0,
     exam INT DEFAULT 0,
     total INT AS (internal + exam) STORED,
@@ -57,7 +59,7 @@ CREATE TABLE marks (
 CREATE TABLE attendance (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT,
-    subject_id INT,
+    subject_id VARCHAR(50),
     attended_classes INT DEFAULT 0,
     total_classes INT DEFAULT 0,
     percentage DECIMAL(5,2) AS (CASE WHEN total_classes > 0 THEN (attended_classes / total_classes) * 100 ELSE 0 END) STORED,
@@ -131,21 +133,21 @@ INSERT INTO students (roll_no, dept, year, dob, user_id) VALUES
 ('CS2024004', 'Computer Science', 1, '2006-02-14', 24),
 ('IT2024004', 'Information Technology', 1, '2006-03-25', 25);
 
-INSERT INTO subjects (id, name, dept, year) VALUES 
-(1, 'Data Structures', 'Computer Science', 1),
-(2, 'Algorithms', 'Computer Science', 1),
-(3, 'Object Oriented Programming', 'Computer Science', 1),
-(4, 'Database Management Systems', 'Computer Science', 2),
-(5, 'Web Development', 'Information Technology', 1),
-(6, 'Cloud Computing', 'Information Technology', 2),
-(7, 'Digital Logic Design', 'Electronics and Communication', 1),
-(8, 'Microprocessors', 'Electronics and Communication', 2),
-(9, 'Circuit Theory', 'Electrical Engineering', 1),
-(10, 'Power Systems', 'Electrical Engineering', 2),
-(11, 'Mechanics of Materials', 'Mechanical Engineering', 1),
-(12, 'Thermodynamics', 'Mechanical Engineering', 2),
-(13, 'Structural Analysis', 'Civil Engineering', 1),
-(14, 'Environmental Engineering', 'Civil Engineering', 2);
+INSERT INTO subjects (id, name, dept, year, semester, credits) VALUES 
+(1, 'Data Structures', 'Computer Science', 1, 1, 4),
+(2, 'Algorithms', 'Computer Science', 1, 1, 4),
+(3, 'Object Oriented Programming', 'Computer Science', 1, 1, 3),
+(4, 'Database Management Systems', 'Computer Science', 2, 3, 4),
+(5, 'Web Development', 'Information Technology', 1, 1, 3),
+(6, 'Cloud Computing', 'Information Technology', 2, 3, 3),
+(7, 'Digital Logic Design', 'Electronics and Communication', 1, 1, 3),
+(8, 'Microprocessors', 'Electronics and Communication', 2, 3, 4),
+(9, 'Circuit Theory', 'Electrical Engineering', 1, 1, 4),
+(10, 'Power Systems', 'Electrical Engineering', 2, 3, 4),
+(11, 'Mechanics of Materials', 'Mechanical Engineering', 1, 1, 3),
+(12, 'Thermodynamics', 'Mechanical Engineering', 2, 3, 3),
+(13, 'Structural Analysis', 'Civil Engineering', 1, 1, 4),
+(14, 'Environmental Engineering', 'Civil Engineering', 2, 3, 3);
 
 INSERT INTO marks (student_id, subject_id, internal, exam) VALUES 
 (1, 1, 25, 65), -- Alice, DS

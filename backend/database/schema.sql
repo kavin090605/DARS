@@ -32,19 +32,22 @@ CREATE TABLE faculty (
 );
 
 CREATE TABLE subjects (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id VARCHAR(50) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     dept VARCHAR(100) NOT NULL,
-    year INT NOT NULL
+    year INT NOT NULL,
+    semester INT NOT NULL,
+    credits INT DEFAULT 3
 );
 
 CREATE TABLE marks (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT,
-    subject_id INT,
+    subject_id VARCHAR(50),
     internal INT DEFAULT 0,
     exam INT DEFAULT 0,
     total INT AS (internal + exam) STORED,
+    UNIQUE(student_id, subject_id),
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
     FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE
 );
@@ -52,10 +55,11 @@ CREATE TABLE marks (
 CREATE TABLE attendance (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT,
-    subject_id INT,
+    subject_id VARCHAR(50),
     attended_classes INT DEFAULT 0,
     total_classes INT DEFAULT 0,
     percentage DECIMAL(5,2) AS (CASE WHEN total_classes > 0 THEN (attended_classes / total_classes) * 100 ELSE 0 END) STORED,
+    UNIQUE(student_id, subject_id),
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
     FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE
 );
