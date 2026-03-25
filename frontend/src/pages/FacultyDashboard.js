@@ -10,7 +10,7 @@ const FacultyDashboard = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/faculty/profile', {
+                const res = await axios.get('https://dars-3-ixzc.onrender.com/api/faculty/profile', {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setProfile(res.data);

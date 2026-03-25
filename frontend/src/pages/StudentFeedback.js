@@ -14,7 +14,7 @@ const StudentFeedback = () => {
         const fetchSubjects = async () => {
             try {
                 setLoading(true);
-                const res = await axios.get('http://localhost:5000/api/student/reports', {
+                const res = await axios.get('https://dars-3-ixzc.onrender.com/api/student/reports', {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 
@@ -60,7 +60,7 @@ const StudentFeedback = () => {
         }
         
         try {
-            await axios.post('http://localhost:5000/api/student/feedback', {
+            await axios.post('https://dars-3-ixzc.onrender.com/api/student/feedback', {
                 subject_id: feedbackSubject.id,
                 feedback_text: feedbackText,
                 is_anonymous: true

@@ -7,7 +7,7 @@ const SubjectManagement = () => {
     const [formData, setFormData] = useState({ id: '', name: '', dept: '', year: '', semester: '', credits: 3 });
 
     const fetchSubjects = async () => {
-        const res = await axios.get('http://localhost:5000/api/admin/subjects', {
+        const res = await axios.get('https://dars-3-ixzc.onrender.com/api/admin/subjects', {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         setSubjects(res.data);
@@ -18,7 +18,7 @@ const SubjectManagement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/admin/subjects', formData, {
+            await axios.post('https://dars-3-ixzc.onrender.com/api/admin/subjects', formData, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setFormData({ id: '', name: '', dept: '', year: '', semester: '', credits: 3 });
@@ -32,7 +32,7 @@ const SubjectManagement = () => {
     const handleDeleteSubject = async (id) => {
         if (window.confirm('Are you sure you want to delete this subject? This will also delete all associated marks and attendance records.')) {
             try {
-                await axios.delete(`http://localhost:5000/api/admin/subjects/${id}`, {
+                await axios.delete(`https://dars-3-ixzc.onrender.com/api/admin/subjects/${id}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 fetchSubjects();

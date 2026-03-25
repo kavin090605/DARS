@@ -21,7 +21,7 @@ const StudentDashboard = () => {
         const fetchReport = async () => {
             try {
                 setLoading(true);
-                const res = await axios.get('http://localhost:5000/api/student/reports', {
+                const res = await axios.get('https://dars-3-ixzc.onrender.com/api/student/reports', {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setData(res.data);
@@ -40,7 +40,7 @@ const StudentDashboard = () => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/student/notifications', {
+                const res = await axios.get('https://dars-3-ixzc.onrender.com/api/student/notifications', {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setNotifications(res.data);
@@ -61,7 +61,7 @@ const StudentDashboard = () => {
 
     const markAsRead = async (id) => {
         try {
-            await axios.post(`http://localhost:5000/api/student/notifications/read/${id}`, {}, {
+            await axios.post(`https://dars-3-ixzc.onrender.com/api/student/notifications/read/${id}`, {}, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));

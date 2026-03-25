@@ -9,7 +9,7 @@ const StudentManagement = () => {
     const [viewAll, setViewAll] = useState(false);
 
     const fetchStudents = async () => {
-        const res = await axios.get('http://localhost:5000/api/admin/students', {
+        const res = await axios.get('https://dars-3-ixzc.onrender.com/api/admin/students', {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         setStudents(res.data);
@@ -20,7 +20,7 @@ const StudentManagement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/admin/students', formData, {
+            await axios.post('https://dars-3-ixzc.onrender.com/api/admin/students', formData, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setFormData({ name: '', email: '', password: '', roll_no: '', dept: '', year: '', dob: '' });
@@ -34,7 +34,7 @@ const StudentManagement = () => {
     const handleDeleteStudent = async (id) => {
         if (window.confirm('Are you sure you want to delete this student? This will also delete their account, marks, and attendance.')) {
             try {
-                await axios.delete(`http://localhost:5000/api/admin/students/${id}`, {
+                await axios.delete(`https://dars-3-ixzc.onrender.com/api/admin/students/${id}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 fetchStudents();
@@ -49,7 +49,7 @@ const StudentManagement = () => {
         e.stopPropagation();
         if (window.confirm(`Are you sure you want to delete the entire '${deptName}' department? This will delete all students, faculty, and subjects associated with it.`)) {
             try {
-                await axios.delete(`http://localhost:5000/api/admin/departments/${deptName}`, {
+                await axios.delete(`https://dars-3-ixzc.onrender.com/api/admin/departments/${deptName}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 fetchStudents();

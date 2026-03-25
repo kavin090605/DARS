@@ -12,7 +12,7 @@ const MarksEntry = () => {
 
     const fetchStudents = async () => {
         if (!selectedDept || !selectedYear) return;
-        const res = await axios.get(`http://localhost:5000/api/faculty/students/${selectedDept}/${selectedYear}`, {
+        const res = await axios.get(`https://dars-3-ixzc.onrender.com/api/faculty/students/${selectedDept}/${selectedYear}`, {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         setStudents(res.data);
@@ -21,7 +21,7 @@ const MarksEntry = () => {
     useEffect(() => {
         const fetchMetadata = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/faculty/metadata', {
+                const res = await axios.get('https://dars-3-ixzc.onrender.com/api/faculty/metadata', {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setMetadata(res.data);
@@ -40,7 +40,7 @@ const MarksEntry = () => {
                 return;
             }
             try {
-                const res = await axios.get(`http://localhost:5000/api/faculty/subjects?dept=${selectedDept}&year=${selectedYear}`, {
+                const res = await axios.get(`https://dars-3-ixzc.onrender.com/api/faculty/subjects?dept=${selectedDept}&year=${selectedYear}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setSubjects(res.data);
@@ -67,7 +67,7 @@ const MarksEntry = () => {
         }
 
         try {
-            await axios.post('http://localhost:5000/api/faculty/marks', {
+            await axios.post('https://dars-3-ixzc.onrender.com/api/faculty/marks', {
                 student_id: studentId,
                 subject_id: selectedSubject,
                 internal: intMark,
