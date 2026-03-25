@@ -1,0 +1,26 @@
+{
+  "name": "ds",
+  "version": "1.0.0",
+  "description": "",
+  "main": "update_student_features_db.js",
+  "scripts": {
+    "start": "concurrently \"npm run start --prefix backend\" \"npm start --prefix frontend\"",
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kavin090605/DARS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kavin090605/DARS/issues"
+  },
+  "homepage": "https://github.com/kavin090605/DARS#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
