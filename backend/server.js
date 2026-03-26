@@ -63,19 +63,17 @@ app.post('/api/auth/temp-import', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, async () => {
-        console.log(`Server running on port ${PORT}`);
+app.listen(PORT, async () => {
+    console.log(`Server running on port ${PORT}`);
 
-        // Test Database Connection
-        const db = require('./config/db');
-        try {
-            await db.query('SELECT 1');
-            console.log('Database connected successfully');
-        } catch (err) {
-            console.error('Database connection failed:', err.message);
-        }
-    });
-}
+    // Test Database Connection
+    const db = require('./config/db');
+    try {
+        await db.query('SELECT 1');
+        console.log('Database connected successfully');
+    } catch (err) {
+        console.error('Database connection failed:', err.message);
+    }
+});
 
 module.exports = app;
