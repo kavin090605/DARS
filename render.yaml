@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: dars-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: DB_HOST
+        value: mysql-2451a1ee-kavin09062005-2767.e.aivencloud.com
+      - key: DB_PORT
+        value: 25148
+      - key: DB_USER
+        value: avnadmin
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        value: defaultdb
+      - key: JWT_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        value: https://dars-e5tt.vercel.app

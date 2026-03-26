@@ -63,19 +63,19 @@ app.post('/api/auth/temp-import', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, async () => {
-    console.log(`Server running on port ${PORT}`);
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, async () => {
+        console.log(`Server running on port ${PORT}`);
 
-    // Test Database Connection
-    const db = require('./config/db');
-    try {
-        await db.query('SELECT 1');
-        console.log('Database connected successfully');
-    } catch (err) {
-        console.error('Database connection failed:', err.message);
-        console.log('--- TROUBLESHOOTING ---');
-        console.log('1. Check if MySQL is running.');
-        console.log('2. Verify backend/.env has the correct DB_USER and DB_PASSWORD.');
-        console.log('3. Ensure the database "dars_db" exists.');
-    }
-});
+        // Test Database Connection
+        const db = require('./config/db');
+        try {
+            await db.query('SELECT 1');
+            console.log('Database connected successfully');
+        } catch (err) {
+            console.error('Database connection failed:', err.message);
+        }
+    });
+}
+
+module.exports = app;

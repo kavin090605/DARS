@@ -1,5 +1,5 @@
 node_modules/
-.env
+**/.env
 *.sql
 backend/import_db.js
 backend/check_*.js
