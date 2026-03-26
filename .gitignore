@@ -1,2 +1,7 @@
 node_modules/
 .env
+*.sql
+backend/import_db.js
+backend/check_*.js
+backend/verify_*.js
+backend/test_*.js

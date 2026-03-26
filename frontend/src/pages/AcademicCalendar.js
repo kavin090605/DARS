@@ -1,3 +1,4 @@
+import API_URL from '../apiConfig';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -9,7 +10,7 @@ const AcademicCalendar = () => {
 
     const fetchCalendar = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/calendar', {
+            const res = await axios.get(`${API_URL}/admin/calendar`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setEvents(res.data);
@@ -21,7 +22,7 @@ const AcademicCalendar = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/admin/calendar', form, {
+            await axios.post(`${API_URL}/admin/calendar`, form, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setShowForm(false);
@@ -33,7 +34,7 @@ const AcademicCalendar = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Delete this entry?')) return;
         try {
-            await axios.delete(`http://localhost:5000/api/admin/calendar/${id}`, {
+            await axios.delete(`${API_URL}/admin/calendar/${id}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             fetchCalendar();

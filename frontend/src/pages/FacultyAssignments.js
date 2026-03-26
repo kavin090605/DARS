@@ -1,3 +1,4 @@
+import API_URL from '../apiConfig';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -11,7 +12,7 @@ const FacultyAssignments = () => {
 
     const fetchAssignments = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/faculty/assignments', {
+            const res = await axios.get(`${API_URL}/faculty/assignments`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setAssignments(res.data);
@@ -21,7 +22,7 @@ const FacultyAssignments = () => {
     useEffect(() => {
         const fetchMetadata = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/faculty/metadata', {
+                const res = await axios.get(`${API_URL}/faculty/metadata`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setMetadata(res.data);
@@ -31,7 +32,7 @@ const FacultyAssignments = () => {
         fetchAssignments();
         const fetchProfile = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/faculty/profile', {
+                const res = await axios.get(`${API_URL}/faculty/profile`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setProfile(res.data);
@@ -44,7 +45,7 @@ const FacultyAssignments = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/faculty/assignments', form, {
+            await axios.post(`${API_URL}/faculty/assignments`, form, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setShowForm(false);
@@ -56,7 +57,7 @@ const FacultyAssignments = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Delete this assignment?')) return;
         try {
-            await axios.delete(`http://localhost:5000/api/faculty/assignments/${id}`, {
+            await axios.delete(`${API_URL}/faculty/assignments/${id}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             fetchAssignments();

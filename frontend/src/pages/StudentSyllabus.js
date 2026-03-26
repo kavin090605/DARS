@@ -1,3 +1,4 @@
+import API_URL from '../apiConfig';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -13,7 +14,7 @@ const StudentSyllabus = () => {
         const fetchSubjects = async () => {
             try {
                 setLoading(true);
-                const res = await axios.get('http://localhost:5000/api/student/reports', {
+                const res = await axios.get(`${API_URL}/student/reports`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 
@@ -42,7 +43,7 @@ const StudentSyllabus = () => {
 
     const fetchSyllabus = async (subjectId) => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/student/syllabus/${subjectId}`, {
+            const res = await axios.get(`${API_URL}/student/syllabus/${subjectId}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setSyllabusData(res.data);

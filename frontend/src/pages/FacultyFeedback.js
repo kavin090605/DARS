@@ -1,3 +1,4 @@
+import API_URL from '../apiConfig';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -20,7 +21,7 @@ const FacultyFeedback = () => {
 
     const fetchFeedback = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/faculty/feedback', {
+            const res = await axios.get(`${API_URL}/faculty/feedback`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setFeedbackList(res.data);
@@ -41,7 +42,7 @@ const FacultyFeedback = () => {
             return;
         }
         try {
-            await axios.post('http://localhost:5000/api/faculty/feedback/reply', {
+            await axios.post(`${API_URL}/faculty/feedback/reply`, {
                 feedback_id: feedbackId,
                 reply_text: replyText
             }, {

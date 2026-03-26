@@ -1,3 +1,4 @@
+import API_URL from '../apiConfig';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -12,7 +13,7 @@ const MarksEntry = () => {
 
     const fetchStudents = async () => {
         if (!selectedDept || !selectedYear) return;
-        const res = await axios.get(`http://localhost:5000/api/faculty/students/${selectedDept}/${selectedYear}`, {
+        const res = await axios.get(`${API_URL}/faculty/students/${selectedDept}/${selectedYear}`, {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         setStudents(res.data);
@@ -21,7 +22,7 @@ const MarksEntry = () => {
     useEffect(() => {
         const fetchMetadata = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/faculty/metadata', {
+                const res = await axios.get(`${API_URL}/faculty/metadata`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setMetadata(res.data);
@@ -40,7 +41,7 @@ const MarksEntry = () => {
                 return;
             }
             try {
-                const res = await axios.get(`http://localhost:5000/api/faculty/subjects?dept=${selectedDept}&year=${selectedYear}`, {
+                const res = await axios.get(`${API_URL}/faculty/subjects?dept=${selectedDept}&year=${selectedYear}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setSubjects(res.data);
@@ -67,7 +68,7 @@ const MarksEntry = () => {
         }
 
         try {
-            await axios.post('http://localhost:5000/api/faculty/marks', {
+            await axios.post(`${API_URL}/faculty/marks`, {
                 student_id: studentId,
                 subject_id: selectedSubject,
                 internal: intMark,

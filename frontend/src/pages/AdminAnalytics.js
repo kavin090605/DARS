@@ -1,3 +1,4 @@
+import API_URL from '../apiConfig';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -12,7 +13,7 @@ const AdminAnalytics = () => {
     useEffect(() => {
         const fetchAnalytics = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/admin/analytics', {
+                const res = await axios.get(`${API_URL}/admin/analytics`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setData(res.data);

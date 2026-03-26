@@ -1,3 +1,4 @@
+import API_URL from '../apiConfig';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -18,7 +19,7 @@ const AttendanceEntry = () => {
             return;
         }
         try {
-            const res = await axios.get(`http://localhost:5000/api/faculty/students/${selectedDept}/${selectedYear}?subject_id=${selectedSubject}`, {
+            const res = await axios.get(`${API_URL}/faculty/students/${selectedDept}/${selectedYear}?subject_id=${selectedSubject}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             // Initialize each student with 'attended' = sessionTotal (defaulting to present for today)
@@ -42,7 +43,7 @@ const AttendanceEntry = () => {
     useEffect(() => {
         const fetchMetadata = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/faculty/metadata', {
+                const res = await axios.get(`${API_URL}/faculty/metadata`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setMetadata(res.data);
@@ -61,7 +62,7 @@ const AttendanceEntry = () => {
                 return;
             }
             try {
-                const res = await axios.get(`http://localhost:5000/api/faculty/subjects?dept=${selectedDept}&year=${selectedYear}`, {
+                const res = await axios.get(`${API_URL}/faculty/subjects?dept=${selectedDept}&year=${selectedYear}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setSubjects(res.data);
@@ -90,7 +91,7 @@ const AttendanceEntry = () => {
         setSubmitting(true);
         try {
             await Promise.all(students.map(s =>
-                axios.post('http://localhost:5000/api/faculty/attendance', {
+                axios.post(`${API_URL}/faculty/attendance`, {
                     student_id: s.id,
                     subject_id: selectedSubject,
                     attended_classes: s.attended,

@@ -1,3 +1,4 @@
+import API_URL from '../apiConfig';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -9,7 +10,7 @@ const EventManagement = () => {
 
     const fetchEvents = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/events', {
+            const res = await axios.get(`${API_URL}/admin/events`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setEvents(res.data);
@@ -21,7 +22,7 @@ const EventManagement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/admin/events', form, {
+            await axios.post(`${API_URL}/admin/events`, form, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setShowForm(false);
@@ -33,7 +34,7 @@ const EventManagement = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Delete this event?')) return;
         try {
-            await axios.delete(`http://localhost:5000/api/admin/events/${id}`, {
+            await axios.delete(`${API_URL}/admin/events/${id}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             fetchEvents();

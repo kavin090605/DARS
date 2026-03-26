@@ -1,3 +1,4 @@
+import API_URL from '../apiConfig';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -8,7 +9,7 @@ const StudentAssignments = () => {
 
     const fetchAssignments = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/student/assignments', {
+            const res = await axios.get(`${API_URL}/student/assignments`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setAssignments(res.data);

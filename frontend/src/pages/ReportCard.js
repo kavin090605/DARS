@@ -1,3 +1,4 @@
+import API_URL from '../apiConfig';
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -14,7 +15,7 @@ const ReportCard = () => {
     useEffect(() => {
         const fetchReport = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/student/reports', {
+                const res = await axios.get(`${API_URL}/student/reports`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setData(res.data);

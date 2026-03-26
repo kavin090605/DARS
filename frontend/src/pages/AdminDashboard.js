@@ -1,3 +1,4 @@
+import API_URL from '../apiConfig';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -11,7 +12,7 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/admin/stats', {
+                const res = await axios.get(`${API_URL}/admin/stats`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setStats(res.data);

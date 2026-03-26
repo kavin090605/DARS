@@ -1,3 +1,4 @@
+import API_URL from '../apiConfig';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -16,7 +17,7 @@ const FacultyManagement = () => {
     });
 
     const fetchFaculty = async () => {
-        const res = await axios.get('http://localhost:5000/api/admin/faculty', {
+        const res = await axios.get(`${API_URL}/admin/faculty`, {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         setFaculty(res.data);
@@ -27,7 +28,7 @@ const FacultyManagement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/admin/faculty', formData, {
+            await axios.post(`${API_URL}/admin/faculty`, formData, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setFormData({
@@ -50,7 +51,7 @@ const FacultyManagement = () => {
     const handleDeleteFaculty = async (id) => {
         if (window.confirm('Are you sure you want to delete this faculty? This will also delete their account.')) {
             try {
-                await axios.delete(`http://localhost:5000/api/admin/faculty/${id}`, {
+                await axios.delete(`${API_URL}/admin/faculty/${id}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 fetchFaculty();
@@ -65,7 +66,7 @@ const FacultyManagement = () => {
         e.stopPropagation();
         if (window.confirm(`Are you sure you want to delete the entire '${deptName}' department? This will delete all faculty, students, and subjects associated with it.`)) {
             try {
-                await axios.delete(`http://localhost:5000/api/admin/departments/${deptName}`, {
+                await axios.delete(`${API_URL}/admin/departments/${deptName}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 fetchFaculty();

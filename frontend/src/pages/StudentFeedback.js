@@ -1,3 +1,4 @@
+import API_URL from '../apiConfig';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -23,7 +24,7 @@ const StudentFeedback = () => {
 
     const fetchMyFeedback = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/student/my-feedback', {
+            const res = await axios.get(`${API_URL}/student/my-feedback`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setMyFeedback(res.data);
@@ -36,7 +37,7 @@ const StudentFeedback = () => {
         const fetchSubjects = async () => {
             try {
                 setLoading(true);
-                const res = await axios.get('http://localhost:5000/api/student/reports', {
+                const res = await axios.get(`${API_URL}/student/reports`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 
@@ -83,7 +84,7 @@ const StudentFeedback = () => {
         }
         
         try {
-            await axios.post('http://localhost:5000/api/student/feedback', {
+            await axios.post(`${API_URL}/student/feedback`, {
                 subject_id: feedbackSubject.id,
                 feedback_text: feedbackText,
                 is_anonymous: true

@@ -1,3 +1,4 @@
+import API_URL from '../apiConfig';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -11,7 +12,7 @@ const FacultyStudyMaterials = () => {
 
     const fetchMaterials = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/faculty/study-materials', {
+            const res = await axios.get(`${API_URL}/faculty/study-materials`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setMaterials(res.data);
@@ -22,7 +23,7 @@ const FacultyStudyMaterials = () => {
         fetchMaterials();
         const fetchProfile = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/faculty/profile', {
+                const res = await axios.get(`${API_URL}/faculty/profile`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setProfile(res.data);
@@ -35,7 +36,7 @@ const FacultyStudyMaterials = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/faculty/study-materials', form, {
+            await axios.post(`${API_URL}/faculty/study-materials`, form, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setShowForm(false);
@@ -47,7 +48,7 @@ const FacultyStudyMaterials = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Delete this study material?')) return;
         try {
-            await axios.delete(`http://localhost:5000/api/faculty/study-materials/${id}`, {
+            await axios.delete(`${API_URL}/faculty/study-materials/${id}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             fetchMaterials();
