@@ -231,4 +231,127 @@ router.delete('/departments/:deptName', async (req, res) => {
     }
 });
 
+// --- Events Management ---
+router.post('/events', async (req, res) => {
+    const { title, description, event_type, event_date, location } = req.body;
+    try {
+        await db.execute(
+            'INSERT INTO events (title, description, event_type, event_date, location) VALUES (?, ?, ?, ?, ?)',
+            [title, description, event_type, event_date, location]
+        );
+        res.status(201).json({ message: 'Event created successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error creating event', error: err.message });
+    }
+});
+
+router.get('/events', async (req, res) => {
+    try {
+        const [events] = await db.execute('SELECT * FROM events ORDER BY event_date DESC');
+        res.json(events);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching events', error: err.message });
+    }
+});
+
+router.delete('/events/:id', async (req, res) => {
+    try {
+        await db.execute('DELETE FROM events WHERE id = ?', [req.params.id]);
+        res.json({ message: 'Event deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error deleting event', error: err.message });
+    }
+});
+
+// --- Academic Calendar ---
+router.post('/calendar', async (req, res) => {
+    const { title, event_date, event_type, description } = req.body;
+    try {
+        await db.execute(
+            'INSERT INTO academic_calendar (title, event_date, event_type, description) VALUES (?, ?, ?, ?)',
+            [title, event_date, event_type, description]
+        );
+        res.status(201).json({ message: 'Calendar event added' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error adding calendar event', error: err.message });
+    }
+});
+
+router.get('/calendar', async (req, res) => {
+    try {
+        const [events] = await db.execute('SELECT * FROM academic_calendar ORDER BY event_date ASC');
+        res.json(events);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching calendar', error: err.message });
+    }
+});
+
+router.delete('/calendar/:id', async (req, res) => {
+    try {
+        await db.execute('DELETE FROM academic_calendar WHERE id = ?', [req.params.id]);
+        res.json({ message: 'Calendar event deleted' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error deleting calendar event', error: err.message });
+    }
+});
+
+// --- Analytics ---
+router.get('/analytics', async (req, res) => {
+    try {
+        // Department-wise student count
+        const [deptStudents] = await db.execute(
+            'SELECT dept, COUNT(*) as count FROM students GROUP BY dept ORDER BY dept'
+        );
+
+        // Department-wise average marks
+        const [deptAvgMarks] = await db.execute(`
+            SELECT st.dept, ROUND(AVG(m.total), 1) as avg_marks
+            FROM marks m
+            JOIN students st ON m.student_id = st.id
+            GROUP BY st.dept ORDER BY st.dept
+        `);
+
+        // Pass/Fail counts per department (Student is "Passed" if all their subjects have total >= 40)
+        const [deptPassFail] = await db.execute(`
+            SELECT dept, 
+                   SUM(CASE WHEN status = 'Passed' THEN 1 ELSE 0 END) as passed,
+                   SUM(CASE WHEN status = 'Failed' THEN 1 ELSE 0 END) as failed
+            FROM (
+                SELECT s.dept, s.id, 
+                       CASE 
+                           WHEN COUNT(m.id) = 0 THEN 'No Marks'
+                           WHEN MIN(m.total) >= 40 THEN 'Passed'
+                           ELSE 'Failed'
+                       END as status
+                FROM students s
+                LEFT JOIN marks m ON s.id = m.student_id
+                GROUP BY s.id, s.dept
+            ) as student_status
+            WHERE status != 'No Marks'
+            GROUP BY dept ORDER BY dept
+        `);
+
+        // List of students who failed at least one subject
+        const [failedStudents] = await db.execute(`
+            SELECT u.name, s.roll_no, s.dept, GROUP_CONCAT(sub.name SEPARATOR ', ') as failed_subjects
+            FROM students s
+            JOIN users u ON s.user_id = u.id
+            JOIN marks m ON s.id = m.student_id
+            JOIN subjects sub ON m.subject_id = sub.id
+            WHERE m.total < 40
+            GROUP BY s.id, u.name, s.roll_no, s.dept
+            ORDER BY s.dept, u.name
+        `);
+
+        // Year-wise student distribution
+        const [yearStudents] = await db.execute(
+            'SELECT year, COUNT(*) as count FROM students GROUP BY year ORDER BY year'
+        );
+
+        res.json({ deptStudents, deptAvgMarks, yearStudents, deptPassFail, failedStudents });
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching analytics', error: err.message });
+    }
+});
+
 module.exports = router;

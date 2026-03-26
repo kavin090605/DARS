@@ -10,7 +10,13 @@ import {
     faClipboardList,
     faChartLine,
     faBookOpen,
-    faCommentDots
+    faCommentDots,
+    faTrophy,
+    faChartBar,
+    faCalendarAlt,
+    faFileAlt,
+    faFolderOpen,
+    faMedal
 } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = ({ role }) => {
@@ -25,12 +31,18 @@ const Sidebar = ({ role }) => {
         { name: 'Faculty', path: '/admin/faculty', icon: faChalkboardTeacher },
         { name: 'Students', path: '/admin/students', icon: faUserGraduate },
         { name: 'Subjects', path: '/admin/subjects', icon: faBook },
+        { name: 'Events', path: '/admin/events', icon: faTrophy },
+        { name: 'Analytics', path: '/admin/analytics', icon: faChartBar },
+        { name: 'Calendar', path: '/admin/calendar', icon: faCalendarAlt },
     ];
 
     const facultyLinks = [
         { name: 'Dashboard', path: '/faculty', icon: faTachometerAlt },
         { name: 'Marks Entry', path: '/faculty/marks', icon: faClipboardList },
         { name: 'Attendance', path: '/faculty/attendance', icon: faChartLine },
+        { name: 'Feedback', path: '/faculty/feedback', icon: faCommentDots },
+        { name: 'Assignments', path: '/faculty/assignments', icon: faFileAlt },
+        { name: 'Materials', path: '/faculty/materials', icon: faFolderOpen },
     ];
 
     const studentLinks = [
@@ -38,6 +50,8 @@ const Sidebar = ({ role }) => {
         { name: 'Report Card', path: '/student/report', icon: faBook },
         { name: 'Syllabus', path: '/student/syllabus', icon: faBookOpen },
         { name: 'Feedback', path: '/student/feedback', icon: faCommentDots },
+        { name: 'Assignments', path: '/student/assignments', icon: faFileAlt },
+        { name: 'Achievements', path: '/student/achievements', icon: faMedal },
     ];
 
     const links = role === 'Admin' ? adminLinks : role === 'Faculty' ? facultyLinks : studentLinks;

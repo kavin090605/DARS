@@ -7,14 +7,36 @@ const StudentFeedback = () => {
     const [currentSemester, setCurrentSemester] = useState(null);
     const [feedbackSubject, setFeedbackSubject] = useState(null);
     const [feedbackText, setFeedbackText] = useState('');
+    const [myFeedback, setMyFeedback] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
+    };
+
+    const fetchMyFeedback = async () => {
+        try {
+            const res = await axios.get('http://localhost:5000/api/student/my-feedback', {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            });
+            setMyFeedback(res.data);
+        } catch (err) {
+            console.error('Error fetching my feedback:', err);
+        }
+    };
 
     useEffect(() => {
         const fetchSubjects = async () => {
             try {
                 setLoading(true);
-                const res = await axios.get('https://dars-3-ixzc.onrender.com/api/student/reports', {
+                const res = await axios.get('http://localhost:5000/api/student/reports', {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 
@@ -51,6 +73,7 @@ const StudentFeedback = () => {
             }
         };
         fetchSubjects();
+        fetchMyFeedback();
     }, []);
 
     const submitFeedback = async () => {
@@ -60,7 +83,7 @@ const StudentFeedback = () => {
         }
         
         try {
-            await axios.post('https://dars-3-ixzc.onrender.com/api/student/feedback', {
+            await axios.post('http://localhost:5000/api/student/feedback', {
                 subject_id: feedbackSubject.id,
                 feedback_text: feedbackText,
                 is_anonymous: true
@@ -70,6 +93,7 @@ const StudentFeedback = () => {
             alert('Feedback submitted successfully!');
             setFeedbackSubject(null);
             setFeedbackText('');
+            fetchMyFeedback();
         } catch (err) {
             alert('Error submitting feedback');
         }
@@ -121,6 +145,39 @@ const StudentFeedback = () => {
                                 )}
                             </tbody>
                         </table>
+                    </div>
+                )}
+
+                {myFeedback.length > 0 && (
+                    <div className="table-container" style={{ marginTop: '2rem' }}>
+                        <h3 style={{ marginBottom: '1rem' }}>Your Submitted Feedback</h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            {myFeedback.map((fb) => (
+                                <div key={fb.id} style={{ padding: '1.5rem', background: '#f8f9fa', borderRadius: '8px', borderLeft: '4px solid #6366f1' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                                        <div style={{ fontWeight: 'bold', color: '#333' }}>{fb.subject_name}</div>
+                                        <div style={{ fontSize: '0.85rem', color: '#888' }}>{formatDate(fb.created_at)}</div>
+                                    </div>
+                                    <p style={{ margin: 0, color: '#444', lineHeight: '1.5' }}>"{fb.feedback_text}"</p>
+
+                                    {fb.faculty_reply ? (
+                                        <div style={{ marginTop: '1rem', padding: '1rem', background: '#eef2ff', borderRadius: '8px', borderLeft: '3px solid #10b981' }}>
+                                            <div style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#059669', marginBottom: '0.3rem' }}>
+                                                Faculty Reply
+                                            </div>
+                                            <p style={{ margin: 0, color: '#444' }}>{fb.faculty_reply}</p>
+                                            <div style={{ fontSize: '0.8rem', color: '#888', marginTop: '0.3rem' }}>
+                                                {formatDate(fb.replied_at)}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: '#9ca3af', fontStyle: 'italic' }}>
+                                            Awaiting faculty reply...
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 )}
 

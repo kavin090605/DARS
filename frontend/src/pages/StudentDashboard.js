@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
+import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList, Legend } from 'recharts';
 import StudentID from '../components/StudentID';
 
 const StudentDashboard = () => {
@@ -21,7 +21,7 @@ const StudentDashboard = () => {
         const fetchReport = async () => {
             try {
                 setLoading(true);
-                const res = await axios.get('https://dars-3-ixzc.onrender.com/api/student/reports', {
+                const res = await axios.get('http://localhost:5000/api/student/reports', {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setData(res.data);
@@ -40,7 +40,7 @@ const StudentDashboard = () => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const res = await axios.get('https://dars-3-ixzc.onrender.com/api/student/notifications', {
+                const res = await axios.get('http://localhost:5000/api/student/notifications', {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setNotifications(res.data);
@@ -61,7 +61,7 @@ const StudentDashboard = () => {
 
     const markAsRead = async (id) => {
         try {
-            await axios.post(`https://dars-3-ixzc.onrender.com/api/student/notifications/read/${id}`, {}, {
+            await axios.post(`http://localhost:5000/api/student/notifications/read/${id}`, {}, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
@@ -228,14 +228,21 @@ const StudentDashboard = () => {
 
                                 <div style={{ width: '100%', height: showGPAGoal ? 220 : 320 }}>
                                     <ResponsiveContainer>
-                                        <BarChart
+                                        <ComposedChart
                                             data={Object.keys(data.semesterData)
                                                 .filter(sem => data.semesterData[sem].gpa !== null)
                                                 .sort((a, b) => a - b)
-                                                .map(sem => ({
-                                                    semester: toRoman(parseInt(sem)),
-                                                    sgpa: data.semesterData[sem].gpa
-                                                }))}
+                                                .reduce((acc, sem, index) => {
+                                                    const sgpa = data.semesterData[sem].gpa || 0;
+                                                    const prevCgpaSum = index > 0 ? acc[index - 1].cgpa * index : 0;
+                                                    const currentCgpa = (prevCgpaSum + sgpa) / (index + 1);
+                                                    acc.push({
+                                                        semester: toRoman(parseInt(sem)),
+                                                        sgpa: parseFloat(sgpa.toFixed(2)),
+                                                        cgpa: parseFloat(currentCgpa.toFixed(2))
+                                                    });
+                                                    return acc;
+                                                }, [])}
                                             margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                                         >
                                             <CartesianGrid strokeDasharray="3 3" stroke="#374151" vertical={false} />
@@ -255,17 +262,28 @@ const StudentDashboard = () => {
                                             />
                                             <Tooltip
                                                 cursor={{ fill: '#1f2937' }}
-                                                contentStyle={{ backgroundColor: '#1f2937', border: 'none', color: '#fff' }}
+                                                contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }}
                                             />
+                                            <Legend verticalAlign="top" height={36}/>
                                             <Bar
+                                                name="SGPA"
                                                 dataKey="sgpa"
                                                 fill="#3b82f6"
                                                 radius={[6, 6, 0, 0]}
-                                                barSize={55}
+                                                barSize={45}
                                             >
-                                                <LabelList dataKey="sgpa" position="top" fill="#fff" fontSize={14} fontWeight="bold" formatter={(val) => val > 0 ? val.toFixed(2) : ''} />
+                                                <LabelList dataKey="sgpa" position="top" fill="#fff" fontSize={11} fontWeight="bold" />
                                             </Bar>
-                                        </BarChart>
+                                            <Line 
+                                                name="CGPA Progression"
+                                                type="monotone" 
+                                                dataKey="cgpa" 
+                                                stroke="#10b981" 
+                                                strokeWidth={3}
+                                                dot={{ fill: '#10b981', r: 5 }}
+                                                activeDot={{ r: 8 }}
+                                            />
+                                        </ComposedChart>
                                     </ResponsiveContainer>
                                 </div>
                             </div>

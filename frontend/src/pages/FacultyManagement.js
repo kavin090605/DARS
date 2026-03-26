@@ -16,7 +16,7 @@ const FacultyManagement = () => {
     });
 
     const fetchFaculty = async () => {
-        const res = await axios.get('https://dars-3-ixzc.onrender.com/api/admin/faculty', {
+        const res = await axios.get('http://localhost:5000/api/admin/faculty', {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         setFaculty(res.data);
@@ -27,7 +27,7 @@ const FacultyManagement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('https://dars-3-ixzc.onrender.com/api/admin/faculty', formData, {
+            await axios.post('http://localhost:5000/api/admin/faculty', formData, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setFormData({
@@ -50,7 +50,7 @@ const FacultyManagement = () => {
     const handleDeleteFaculty = async (id) => {
         if (window.confirm('Are you sure you want to delete this faculty? This will also delete their account.')) {
             try {
-                await axios.delete(`https://dars-3-ixzc.onrender.com/api/admin/faculty/${id}`, {
+                await axios.delete(`http://localhost:5000/api/admin/faculty/${id}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 fetchFaculty();
@@ -65,7 +65,7 @@ const FacultyManagement = () => {
         e.stopPropagation();
         if (window.confirm(`Are you sure you want to delete the entire '${deptName}' department? This will delete all faculty, students, and subjects associated with it.`)) {
             try {
-                await axios.delete(`https://dars-3-ixzc.onrender.com/api/admin/departments/${deptName}`, {
+                await axios.delete(`http://localhost:5000/api/admin/departments/${deptName}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 fetchFaculty();

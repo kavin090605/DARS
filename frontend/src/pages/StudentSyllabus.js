@@ -13,7 +13,7 @@ const StudentSyllabus = () => {
         const fetchSubjects = async () => {
             try {
                 setLoading(true);
-                const res = await axios.get('https://dars-3-ixzc.onrender.com/api/student/reports', {
+                const res = await axios.get('http://localhost:5000/api/student/reports', {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 
@@ -42,7 +42,7 @@ const StudentSyllabus = () => {
 
     const fetchSyllabus = async (subjectId) => {
         try {
-            const res = await axios.get(`https://dars-3-ixzc.onrender.com/api/student/syllabus/${subjectId}`, {
+            const res = await axios.get(`http://localhost:5000/api/student/syllabus/${subjectId}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setSyllabusData(res.data);

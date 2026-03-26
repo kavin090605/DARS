@@ -175,4 +175,116 @@ router.post('/attendance', async (req, res) => {
     }
 });
 
+// Fetch Feedback for Primary Subject
+router.get('/feedback', async (req, res) => {
+    try {
+        const [feedback] = await db.execute(`
+            SELECT sf.id, sf.feedback_text, sf.is_anonymous, sf.created_at, sf.faculty_reply, sf.replied_at,
+                   u.name as student_name, s.name as subject_name
+            FROM subject_feedback sf
+            JOIN subjects s ON sf.subject_id = s.id
+            JOIN faculty f ON f.subject = s.name
+            LEFT JOIN students st ON sf.student_id = st.id
+            LEFT JOIN users u ON st.user_id = u.id
+            WHERE f.user_id = ?
+            ORDER BY sf.created_at DESC
+        `, [req.user.id]);
+        
+        // The user explicitly requested to always show the student name, overriding anonymity.
+        const cleanFeedback = feedback.map(f => ({
+            ...f,
+            student_name: f.student_name 
+        }));
+        
+        res.json(cleanFeedback);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching feedback', error: err.message });
+    }
+});
+
+// Reply to Feedback
+router.post('/feedback/reply', async (req, res) => {
+    const { feedback_id, reply_text } = req.body;
+    try {
+        await db.execute(
+            'UPDATE subject_feedback SET faculty_reply = ?, replied_at = NOW() WHERE id = ?',
+            [reply_text, feedback_id]
+        );
+        res.json({ message: 'Reply submitted successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error submitting reply', error: err.message });
+    }
+});
+
+// --- Assignments ---
+router.post('/assignments', async (req, res) => {
+    const { subject_name, title, description, due_date, dept, year } = req.body;
+    try {
+        await db.execute(
+            'INSERT INTO assignments (faculty_user_id, subject_name, title, description, due_date, dept, year) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [req.user.id, subject_name, title, description, due_date, dept || null, year || null]
+        );
+        res.status(201).json({ message: 'Assignment created' });
+    } catch (err) {
+        console.error('Assignment Error:', err);
+        res.status(500).json({ message: 'Error creating assignment', error: err.message });
+    }
+});
+
+router.get('/assignments', async (req, res) => {
+    try {
+        const [assignments] = await db.execute(
+            'SELECT * FROM assignments WHERE faculty_user_id = ? ORDER BY due_date DESC',
+            [req.user.id]
+        );
+        res.json(assignments);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching assignments', error: err.message });
+    }
+});
+
+router.delete('/assignments/:id', async (req, res) => {
+    try {
+        await db.execute('DELETE FROM assignments WHERE id = ? AND faculty_user_id = ?', [req.params.id, req.user.id]);
+        res.json({ message: 'Assignment deleted' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error deleting assignment', error: err.message });
+    }
+});
+
+// --- Study Materials ---
+router.post('/study-materials', async (req, res) => {
+    const { subject_name, title, content } = req.body;
+    try {
+        await db.execute(
+            'INSERT INTO study_materials (faculty_user_id, subject_name, title, content) VALUES (?, ?, ?, ?)',
+            [req.user.id, subject_name, title, content]
+        );
+        res.status(201).json({ message: 'Study material added' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error adding study material', error: err.message });
+    }
+});
+
+router.get('/study-materials', async (req, res) => {
+    try {
+        const [materials] = await db.execute(
+            'SELECT * FROM study_materials WHERE faculty_user_id = ? ORDER BY created_at DESC',
+            [req.user.id]
+        );
+        res.json(materials);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching study materials', error: err.message });
+    }
+});
+
+router.delete('/study-materials/:id', async (req, res) => {
+    try {
+        await db.execute('DELETE FROM study_materials WHERE id = ? AND faculty_user_id = ?', [req.params.id, req.user.id]);
+        res.json({ message: 'Study material deleted' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error deleting study material', error: err.message });
+    }
+});
+
 module.exports = router;

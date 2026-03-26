@@ -14,7 +14,7 @@ const ReportCard = () => {
     useEffect(() => {
         const fetchReport = async () => {
             try {
-                const res = await axios.get('https://dars-3-ixzc.onrender.com/api/student/reports', {
+                const res = await axios.get('http://localhost:5000/api/student/reports', {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setData(res.data);

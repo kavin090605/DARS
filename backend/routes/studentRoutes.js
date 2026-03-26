@@ -184,4 +184,93 @@ router.post('/feedback', async (req, res) => {
     }
 });
 
+// Get My Feedback with Faculty Replies
+router.get('/my-feedback', async (req, res) => {
+    try {
+        const [studentInfo] = await db.execute('SELECT id FROM students WHERE user_id = ?', [req.user.id]);
+        if (studentInfo.length === 0) return res.status(404).json({ message: 'Student not found' });
+
+        const [feedback] = await db.execute(`
+            SELECT sf.id, sf.feedback_text, sf.created_at, sf.faculty_reply, sf.replied_at, s.name as subject_name
+            FROM subject_feedback sf
+            JOIN subjects s ON sf.subject_id = s.id
+            WHERE sf.student_id = ?
+            ORDER BY sf.created_at DESC
+        `, [studentInfo[0].id]);
+
+        res.json(feedback);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching feedback', error: err.message });
+    }
+});
+
+// --- Achievements ---
+router.post('/achievements', async (req, res) => {
+    const { title, category, description, date_achieved } = req.body;
+    try {
+        const [studentInfo] = await db.execute('SELECT id FROM students WHERE user_id = ?', [req.user.id]);
+        if (studentInfo.length === 0) return res.status(404).json({ message: 'Student not found' });
+
+        await db.execute(
+            'INSERT INTO achievements (student_id, title, category, description, date_achieved) VALUES (?, ?, ?, ?, ?)',
+            [studentInfo[0].id, title, category, description, date_achieved]
+        );
+        res.status(201).json({ message: 'Achievement added' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error adding achievement', error: err.message });
+    }
+});
+
+router.get('/achievements', async (req, res) => {
+    try {
+        const [studentInfo] = await db.execute('SELECT id FROM students WHERE user_id = ?', [req.user.id]);
+        if (studentInfo.length === 0) return res.status(404).json({ message: 'Student not found' });
+
+        const [achievements] = await db.execute(
+            'SELECT * FROM achievements WHERE student_id = ? ORDER BY date_achieved DESC',
+            [studentInfo[0].id]
+        );
+        res.json(achievements);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching achievements', error: err.message });
+    }
+});
+
+router.delete('/achievements/:id', async (req, res) => {
+    try {
+        const [studentInfo] = await db.execute('SELECT id FROM students WHERE user_id = ?', [req.user.id]);
+        if (studentInfo.length === 0) return res.status(404).json({ message: 'Student not found' });
+
+        await db.execute('DELETE FROM achievements WHERE id = ? AND student_id = ?', [req.params.id, studentInfo[0].id]);
+        res.json({ message: 'Achievement deleted' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error deleting achievement', error: err.message });
+    }
+});
+
+// Get My Assignments (Filtered by Dept and Year)
+router.get('/assignments', async (req, res) => {
+    try {
+        // Get student's dept and year first
+        const [studentInfo] = await db.execute('SELECT dept, year FROM students WHERE user_id = ?', [req.user.id]);
+        if (studentInfo.length === 0) return res.status(404).json({ message: 'Student not found' });
+        
+        const { dept, year } = studentInfo[0];
+
+        // Fetch assignments that match the student's dept and year, or those assigned to ALL students (null dept/year)
+        const [assignments] = await db.execute(`
+            SELECT a.id, a.title, a.description, a.due_date, a.subject_name, u.name as faculty_name
+            FROM assignments a
+            JOIN users u ON a.faculty_user_id = u.id
+            WHERE (a.dept = ? AND a.year = ?) OR (a.dept IS NULL AND a.year IS NULL)
+            ORDER BY a.due_date ASC
+        `, [dept, year]);
+
+        res.json(assignments);
+    } catch (err) {
+        console.error('Fetch Student Assignments Error:', err);
+        res.status(500).json({ message: 'Error fetching assignments', error: err.message });
+    }
+});
+
 module.exports = router;

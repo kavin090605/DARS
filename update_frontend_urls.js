@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 const dir = path.join(__dirname, 'frontend', 'src');
-const fromUrl = 'http://localhost:5000';
-const toUrl = 'https://dars-3-ixzc.onrender.com';
+const fromUrl = 'https://dars-3-ixzc.onrender.com';
+const toUrl = 'http://localhost:5000';
 
 function replaceInDir(currentDir) {
     const files = fs.readdirSync(currentDir);
